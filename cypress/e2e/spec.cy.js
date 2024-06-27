@@ -56,4 +56,57 @@ describe('template spec', () => {
     cy.get('.todo-list li')
       .should('have.length', 2);
   });
+
+  it('Edita uma tarefa', () => {
+    cy.visit('http://127.0.0.1:7001');
+
+    cy.get('.new-todo')
+      .type('TP2 de ES{enter}');
+
+      cy.get('.todo-list li')
+      .dblclick();
+
+    cy.get('.todo-list li .edit')
+      .clear()
+      .type('TP2 de ES atualizado{enter}');
+
+    cy.get('.todo-list li')
+      .should('have.length', 1)
+      .first()
+      .should('have.text', 'TP2 de ES atualizado');
+  });
+
+  it('Marca todas as tarefas como completas', () => {
+    cy.visit('http://127.0.0.1:7001');
+  
+    cy.get('.new-todo')
+      .type('TP2 de ES{enter}')
+      .type('Prova de ES{enter}')
+      .type('Estudo de Caso{enter}');
+  
+    cy.get('.todo-list li').each(($el, index, $list) => {
+      cy.wrap($el).find('.toggle').check();
+      cy.wrap($el).should('have.class', 'completed');
+    });
+  });
+
+  it('Limpa tarefas completas', () => {
+    cy.visit('http://127.0.0.1:7001');
+
+    cy.get('.new-todo')
+      .type('TP2 de ES{enter}')
+      .type('Prova de ES{enter}');
+    
+    cy.get('.todo-list li .toggle')
+      .first()
+      .click();
+
+    cy.contains('Clear completed').click();
+
+    cy.get('.todo-list li')
+      .should('have.length', 1)
+      .first()
+      .should('have.text', 'Prova de ES');
+  });
+    
 });
